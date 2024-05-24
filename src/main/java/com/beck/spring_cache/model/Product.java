@@ -1,10 +1,25 @@
 package com.beck.spring_cache.model;
 
-import java.io.Serializable;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
 
-public record Product(
-        Long id,
-        String name,
-        String description
-) implements Serializable {
+import java.io.Serializable;
+import java.util.UUID;
+
+@Entity
+@Table
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "id")
+@Getter
+@Builder
+public class Product {
+    @Id
+    @GeneratedValue
+    private UUID id;
+    private String name;
+    private String description;
 }

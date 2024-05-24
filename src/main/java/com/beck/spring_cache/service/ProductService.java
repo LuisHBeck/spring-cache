@@ -1,34 +1,36 @@
 package com.beck.spring_cache.service;
 
+import com.beck.spring_cache.dto.ProductDetailingDto;
+import com.beck.spring_cache.dto.ProductRequestDto;
 import com.beck.spring_cache.model.Product;
+import com.beck.spring_cache.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
+@Service
 public class ProductService {
-    Map<Long, Product> products = new HashMap<>() {
-        {
-            put(1L, new Product(1L, "Notebook", "Macbook Pro"));
-            put(2L, new Product(2L, "Notebook", "XPS"));
-            put(3L, new Product(3L, "Notebook", "Alienware"));
-            put(4L, new Product(4L, "Notebook", "Thinkpad"));
-            put(5L, new Product(5L, "Notebook", "Zenbook"));
-        }
-    };
 
-    @Cacheable("products")
-    public Product getById(Long id) {
-        System.out.println(String.format("Searching product with id %s", id));
-        simulateLatency();
-        return products.get(id);
+    @Autowired
+    private ProductRepository productRepository;
+
+    public ProductDetailingDto createProduct(ProductRequestDto productDto) {
+        Product product = Product.builder()
+                .name(productDto.name())
+                .description(productDto.description())
+                .build();
+
+        productRepository.save(product);
+        System.out.println("created");
+        return new ProductDetailingDto(product);
     }
 
-    private void simulateLatency() {
-        try {
-            Thread.sleep(1000L);
-        }catch (InterruptedException ex) {
-            throw new RuntimeException(ex.getMessage());
-        }
+    @Cacheable("products")
+    public ProductDetailingDto getProductById(UUID productId) {
+        Product product = productRepository.getReferenceById(productId);
+        System.out.println("GET FROM REPOSITORY");
+        return new ProductDetailingDto(product);
     }
 }

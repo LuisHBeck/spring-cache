@@ -2,5 +2,20 @@ spring:
   application:
     name: spring-cache
 
+  datasource:
+    username: postgres
+    url: jdbc:postgresql://10.234.84.58:6965/spring_cache
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
   cache:
     type: redis
+
+server:
+  error:
+    include-stacktrace: never
+
+  port: 9292
